@@ -1,5 +1,3 @@
-"use client";
-
 import { Category } from "@/sanity.types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,14 +20,22 @@ import { ChevronsUpDown, Check } from "lucide-react";
 
 interface CategorySelectorProps {
   categories: Category[];
+  onCategorySelect: (categoryId: string | null) => void; // Prop pentru filtrare
 }
 
 export function CategorySelectorComponent({
   categories,
+  onCategorySelect,
 }: CategorySelectorProps) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
-  const router = useRouter();
+  const [value, setValue] = useState<string | null>(null);
+
+  const handleSelect = (categoryId: string | null) => {
+    setValue(categoryId);
+    onCategorySelect(categoryId); // Notificăm părinte
+    setOpen(false);
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -41,14 +47,14 @@ export function CategorySelectorComponent({
         >
           {value
             ? categories.find((category) => category._id === value)?.title
-            : "Filter by Category"}
+            : "Filtreaza categorii"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
           <CommandInput
-            placeholder="Search category..."
+            placeholder="Cauta categorie..."
             className="h-9"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -57,28 +63,20 @@ export function CategorySelectorComponent({
                     ?.toLowerCase()
                     .includes(e.currentTarget.value.toLowerCase())
                 );
-                if (selectedCategory?.slug?.current) {
-                  setValue(selectedCategory._id);
-                  router.push(`/categories/${selectedCategory.slug.current}`);
-                  setOpen(false);
-                }
+                handleSelect(selectedCategory?._id || null);
               }
             }}
           />
           <CommandList>
-            <CommandEmpty>No category found.</CommandEmpty>
+            <CommandEmpty>Nu s-a gasit categoria.</CommandEmpty>
             <CommandGroup>
               {categories.map((category) => (
                 <CommandItem
                   key={category._id}
                   value={category.title}
-                  onSelect={() => {
-                    setValue(value === category._id ? "" : category._id);
-                    router.push(`/categories/${category.slug?.current}`);
-                    setOpen(false);
-                  }}
+                  onSelect={() => handleSelect(category._id)}
                 >
-                  {category.title}{" "}
+                  {category.title}
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",

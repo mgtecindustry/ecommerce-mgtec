@@ -6,7 +6,7 @@ import ProductThumb from "./ProductThumb";
 
 function ProductGrid({ products }: { products: Product[] }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4">
+    <div className="grid items-center   sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-8">
       {products.map((product) => {
         return (
           <AnimatePresence key={product._id}>
@@ -15,9 +15,9 @@ function ProductGrid({ products }: { products: Product[] }) {
               initial={{ opacity: 0.2 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex w-full"
+              className="flex w-auto md:w-[200px] h-full"
             >
-              <ProductThumb product={product} />
+              <ProductThumb key={product._id} product={product} />
             </motion.div>
           </AnimatePresence>
         );

@@ -8,21 +8,19 @@ function ProductThumb({ product }: { product: Product }) {
   return (
     <Link
       href={`/product/${product.slug?.current}`}
-      className={`flex flex-col bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden ${
-        isOutOfStock ? "opacity-50" : ""
-      }`}
+      className={`group flex flex-col bg-white rounded-lg  min-h-[400px] min border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden ${isOutOfStock ? "opacity-50" : ""}`}
     >
-      {/* Imaginea produsului */}
-      <div className="relative aspect-square w-full">
+      <div className="relative aspect-square w-full h-full overflow-hidden">
         {product.image && (
           <Image
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-contain transition-transform duration-300 group-hover:scale-105"
             src={imageUrl(product.image).url()}
             alt={product.name || "Product image"}
-            width={300}
-            height={300}
+            fill
+            sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
           />
         )}
+
         {isOutOfStock && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <span className="text-white font-bold text-lg">Out of Stock</span>
@@ -30,8 +28,8 @@ function ProductThumb({ product }: { product: Product }) {
         )}
       </div>
 
-      {/* Detalii despre produs */}
-      <div className="p-4 flex flex-col flex-1">
+      {/* Descrierea produsului */}
+      <div className="p-4">
         <h2 className="text-lg font-semibold text-gray-800 truncate">
           {product.name}
         </h2>
@@ -43,7 +41,7 @@ function ProductThumb({ product }: { product: Product }) {
           )}
         </p>
         <p className="mt-2 text-lg font-bold text-gray-900">
-          RON {product.price?.toFixed(2)}
+          RON{product.price?.toFixed(2)}
         </p>
       </div>
     </Link>
