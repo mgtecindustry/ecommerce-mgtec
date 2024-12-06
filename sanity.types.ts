@@ -281,6 +281,13 @@ export type SanityImageMetadata = {
 
 export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | Sale | Order | Product | Category | Slug | BlockContent | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata;
 export declare const internalGroqTypeReferenceTo: unique symbol;
+// Source: ./sanity/lib/products/getAllBrands.ts
+// Variable: ALL_BRANDS_QUERY
+// Query: *[_type == "product"]{      brand    } | order(brand asc)
+export type ALL_BRANDS_QUERYResult = Array<{
+  brand: string | null;
+}>;
+
 // Source: ./sanity/lib/products/getAllCategories.ts
 // Variable: ALL_CATEGORIES_QUERY
 // Query: *[_type =='category'] | order(name asc)
@@ -573,6 +580,7 @@ export type ACTIVE_SALE_BY_COUPON_QUERYResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
+    "\n    *[_type == \"product\"]{\n      brand\n    } | order(brand asc)\n  ": ALL_BRANDS_QUERYResult;
     "*[_type =='category'] | order(name asc)": ALL_CATEGORIES_QUERYResult;
     "\n        *[_type ==\"product\"]|order(name asc)": ALL_PRODUCTS_QUERYResult;
     "\n    *[\n      _type == \"product\" && slug.current == $slug\n      ] | order(name asc)[0]\n    ": PRODUCT_BY_ID_QUERYResult;

@@ -1,23 +1,19 @@
 import { getAllProducts } from "@/sanity/lib/products/getAllProducts";
-import ProductsView from "@/components/ProductsView";
 import { getAllCategories } from "@/sanity/lib/products/getAllCategories";
 import DiscoverOurProductsBanner from "@/components/DiscoverOurProductsBanner";
-import { CheckboxReactHookFormMultiple } from "@/components/CategoriesForm";
+
+import ProductsViewClient from "@/components/ProductsViewClient";
 
 export default async function Home() {
   const products = await getAllProducts();
   const categories = await getAllCategories();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-100 ">
       <DiscoverOurProductsBanner />
 
-      {/* <Sidebar categories={categories} /> */}
-
-      <div className="p-4 mx-auto flex">
-        <div className="mx-auto">
-          <ProductsView products={products} categories={categories} />
-        </div>
+      <div className="p-4 mx-auto w-full">
+        <ProductsViewClient products={products} categories={categories} />
       </div>
     </div>
   );
