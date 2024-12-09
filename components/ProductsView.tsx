@@ -245,11 +245,95 @@ const ProductsView = ({ products, categories }: ProductsViewProps) => {
           </button>
         </div>
         {showFilters && (
-          <div className="grid  items-center mx-auto justify-center">
-            <div className="grid mb-4">
-              <h2 className="text-center mb-4">Categorii</h2>
+          <div className="grid items-center mx-auto justify-center p-4">
+            <h2 className=" text-center text-lg font-semibold text-gray-800 border-b">
+              Sortează
+            </h2>
+            <form className="grid sm:hidden justify-between w-full items-center mt-4">
+              <div>
+                <label className="flex items-center text-sm text-gray-700">
+                  <input
+                    type="radio"
+                    name="sort"
+                    value="price-asc"
+                    className="mr-2 translate-y-[2px]"
+                    onClick={sortByPriceAsc}
+                  />
+                  Preț crescător
+                </label>
+              </div>
+              <div>
+                <label className="flex items-center text-sm text-gray-700">
+                  <input
+                    type="radio"
+                    name="sort"
+                    value="price-desc"
+                    className="mr-2 translate-y-[2px]"
+                    onClick={sortByPriceDesc}
+                  />
+                  Preț descrescător
+                </label>
+              </div>
+              <div>
+                <label className="flex items-center text-sm text-gray-700">
+                  <input
+                    type="radio"
+                    name="sort"
+                    value="a-z"
+                    className="mr-2 translate-y-[2px]"
+                    onClick={handleAZSort}
+                  />
+                  Alfabetic A-Z
+                </label>
+              </div>
+              <div>
+                <label className="flex items-center text-sm text-gray-700">
+                  <input
+                    type="radio"
+                    name="sort"
+                    value="z-a"
+                    className="mr-2 translate-y-[2px]"
+                    onClick={handleZASort}
+                  />
+                  Alfabetic Z-A
+                </label>
+              </div>
+            </form>
+            <div className="grid items-center mx-auto justify-center mt-6">
+              <h2 className="text-center text-lg font-semibold text-gray-800 mb-4 border-b">
+                Producător
+              </h2>
+              {allBrands.map(
+                (brand) =>
+                  brand && (
+                    <div
+                      key={brand}
+                      className="flex mt-2 items-center space-x-2"
+                    >
+                      <Checkbox
+                        id={brand}
+                        checked={selectedBrands.includes(brand)}
+                        onCheckedChange={() => handleBrandChange(brand)}
+                      />
+                      <Label
+                        htmlFor={brand}
+                        className="leading-7 text-sm text-gray-700"
+                      >
+                        {brand}
+                      </Label>
+                    </div>
+                  )
+              )}
+            </div>
+            <div className="grid items-center mx-auto justify-center mt-6">
+              <h2 className="text-center text-lg font-semibold text-gray-800 mb-4">
+                Categorii
+              </h2>
               {categories.map((category) => (
-                <div className="flex items-center " key={category._id}>
+                <div
+                  className="flex mt-2 items-center space-x-2"
+                  key={category._id}
+                >
                   <Checkbox
                     id={category._id}
                     checked={selectedCategories.includes(category._id)}
@@ -257,67 +341,16 @@ const ProductsView = ({ products, categories }: ProductsViewProps) => {
                   />
                   <Label
                     htmlFor={category._id}
-                    className="leading-7 [&:not(:first-child)]"
+                    className="leading-7 text-sm text-gray-700"
                   >
                     {category.title}
                   </Label>
                 </div>
               ))}
             </div>
-            <div>
-              <form className="grid sm:hidden justify-between w-full items-center">
-                <div>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="sort"
-                      value="price-asc"
-                      className="mr-2 translate-y-[2px]"
-                      onClick={sortByPriceAsc}
-                    />
-                    Preț crescător
-                  </label>
-                </div>
-                <div>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="sort"
-                      value="price-desc"
-                      className="mr-2 translate-y-[2px]"
-                      onClick={sortByPriceDesc}
-                    />
-                    Preț descrescător
-                  </label>
-                </div>
-                <div>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="sort"
-                      value="a-z"
-                      className="mr-2 translate-y-[2px]"
-                      onClick={handleAZSort}
-                    />
-                    Alfabetic A-Z
-                  </label>
-                </div>
-                <div>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="sort"
-                      value="z-a"
-                      className="mr-2 translate-y-[2px]"
-                      onClick={handleZASort}
-                    />
-                    Alfabetic Z-A
-                  </label>
-                </div>
-              </form>
-            </div>
           </div>
         )}
+
         <ProductGrid products={filteredProducts} />
       </div>
     </div>
