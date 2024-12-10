@@ -3,15 +3,15 @@ import { searchProductsByName } from "@/sanity/lib/products/searchProductsByName
 
 interface SearchPageProps {
   searchParams: {
-    query: string;
+    query?: string;
   };
 }
 
 async function SearchPage({ searchParams }: SearchPageProps) {
-  const { query } = searchParams;
+  const query = searchParams.query || "";
   const products = await searchProductsByName(query);
 
-  if (!products.length) {
+  if (!products) {
     return (
       <div className="flex flex-col items-center justify-top min-h-screen bg-gray-100 p-4">
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-7xl">
