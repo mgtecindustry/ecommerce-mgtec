@@ -12,7 +12,7 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen bg-gray-100 ">
       <DiscoverOurProductsBanner />
 
-      <div className="p-4 mx-auto w-full">
+      <div className="p-2 sm:p-4 mx-auto w-full">
         <ProductsViewClient products={products} categories={categories} />
       </div>
     </div>

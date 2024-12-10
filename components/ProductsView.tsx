@@ -4,8 +4,20 @@ import { Category, Product } from "@/sanity.types";
 import ProductGrid from "./ProductGrid";
 import { useState, useEffect } from "react";
 import { FaFilter, FaTimes } from "react-icons/fa";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Filter } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
 
 interface ProductsViewProps {
   products: Product[];
@@ -106,251 +118,183 @@ const ProductsView = ({ products, categories }: ProductsViewProps) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen justify-center items-center bg-gray-100">
-      <div className="grid sm:flex  sm:mt-12 space-y-8">
-        <div className="flex-col w-1/5  justify-center items-center mt-8 h-full ">
-          {/* Categorii */}
-          <div className="hidden sm:flex flex-col p-4 w-full relative bg-white">
-            <h2 className="scroll-m-20 pb-2 border-b text-3xl font-semibold tracking-tight first:mt-0">
-              Categorii
-            </h2>
-            {categories.map((category) => (
-              <div
-                key={category._id}
-                className="flex mt-2 items-center space-x-2"
-              >
-                <Checkbox
-                  id={category._id}
-                  checked={selectedCategories.includes(category._id)}
-                  onCheckedChange={() => handleCategoryChange(category._id)}
-                />
-                <Label
-                  htmlFor={category._id}
-                  className="leading-7 [&:not(:first-child)]"
-                >
-                  {category.title}
-                </Label>
-              </div>
-            ))}
-          </div>
-
-          {/* Producător */}
-          <div className="hidden sm:flex flex-col mt-8 p-4 w-full relative bg-white">
-            <h2 className="scroll-m-20 pb-2 border-b text-3xl font-semibold tracking-tight first:mt-0">
-              Producător
-            </h2>
-            {allBrands.map(
-              (brand) =>
-                brand && (
-                  <div key={brand} className="flex mt-2 items-center space-x-2">
-                    <Checkbox
-                      id={brand}
-                      checked={selectedBrands.includes(brand)}
-                      onCheckedChange={() => handleBrandChange(brand)}
-                    />
-                    <Label
-                      htmlFor={brand}
-                      className="leading-7 [&:not(:first-child)]"
-                    >
-                      {brand}
-                    </Label>
-                  </div>
-                )
-            )}
-          </div>
-
-          {/* Resetare filtre */}
-          <div className="bg-white text-red-500 mt-4">
-            <p
-              onClick={resetFilters}
-              className="ml-4 hidden sm:flex my-4 cursor-pointer items-center justify-between"
-            >
-              Sterge toate filtrele
-              <span className="mr-2">
-                <FaTimes />
-              </span>
-            </p>
-          </div>
-        </div>
-
-        {/* Grid de produse */}
-        <div className="hidden sm:grid ml-8">
-          {/* Sortari */}
-          <div className="hidden sm:flex bg-white p-2  sm:px-8 ml-1 mb-4 sm:mb-8 text-sm font-medium leading-none h-12  items-center">
-            <form
-              onChange={() => {}}
-              className="grid  sm:flex justify-between w-full items-center"
-            >
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="sort"
-                    value="price-asc"
-                    className="mr-2 translate-y-[2px]"
-                    onClick={sortByPriceAsc}
-                  />
-                  Preț crescător
-                </label>
-              </div>
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="sort"
-                    value="price-desc"
-                    className="mr-2 translate-y-[2px]"
-                    onClick={sortByPriceDesc}
-                  />
-                  Preț descrescător
-                </label>
-              </div>
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="sort"
-                    value="a-z"
-                    className="mr-2 translate-y-[2px]"
-                    onClick={handleAZSort}
-                  />
-                  Alfabetic A-Z
-                </label>
-              </div>
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="sort"
-                    value="z-a"
-                    className="mr-2 translate-y-[2px]"
-                    onClick={handleZASort}
-                  />
-                  Alfabetic Z-A
-                </label>
-              </div>
-            </form>
-          </div>
-          <ProductGrid products={filteredProducts} />
-        </div>
-      </div>
-      <div className="block w-full sm:hidden bg-white ">
-        <div className="flex sm:hidden justify-between items-center px-4">
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center py-2 px-4 rounded-md"
-          >
-            <FaFilter className="mr-2" />
-            Filtre
-          </button>
-        </div>
-        {showFilters && (
-          <div className="grid items-center mx-auto justify-center p-4">
-            <h2 className=" text-center text-lg font-semibold text-gray-800 border-b">
-              Sortează
-            </h2>
-            <form className="grid sm:hidden justify-between w-full items-center mt-4">
-              <div>
-                <label className="flex items-center text-sm text-gray-700">
-                  <input
-                    type="radio"
-                    name="sort"
-                    value="price-asc"
-                    className="mr-2 translate-y-[2px]"
-                    onClick={sortByPriceAsc}
-                  />
-                  Preț crescător
-                </label>
-              </div>
-              <div>
-                <label className="flex items-center text-sm text-gray-700">
-                  <input
-                    type="radio"
-                    name="sort"
-                    value="price-desc"
-                    className="mr-2 translate-y-[2px]"
-                    onClick={sortByPriceDesc}
-                  />
-                  Preț descrescător
-                </label>
-              </div>
-              <div>
-                <label className="flex items-center text-sm text-gray-700">
-                  <input
-                    type="radio"
-                    name="sort"
-                    value="a-z"
-                    className="mr-2 translate-y-[2px]"
-                    onClick={handleAZSort}
-                  />
-                  Alfabetic A-Z
-                </label>
-              </div>
-              <div>
-                <label className="flex items-center text-sm text-gray-700">
-                  <input
-                    type="radio"
-                    name="sort"
-                    value="z-a"
-                    className="mr-2 translate-y-[2px]"
-                    onClick={handleZASort}
-                  />
-                  Alfabetic Z-A
-                </label>
-              </div>
-            </form>
-            <div className="grid items-center mx-auto justify-center mt-6">
-              <h2 className="text-center text-lg font-semibold text-gray-800 mb-4 border-b">
-                Producător
-              </h2>
-              {allBrands.map(
-                (brand) =>
-                  brand && (
-                    <div
-                      key={brand}
-                      className="flex mt-2 items-center space-x-2"
-                    >
-                      <Checkbox
-                        id={brand}
-                        checked={selectedBrands.includes(brand)}
-                        onCheckedChange={() => handleBrandChange(brand)}
-                      />
-                      <Label
-                        htmlFor={brand}
-                        className="leading-7 text-sm text-gray-700"
-                      >
-                        {brand}
-                      </Label>
-                    </div>
-                  )
-              )}
-            </div>
-            <div className="grid items-center mx-auto justify-center mt-6">
-              <h2 className="text-center text-lg font-semibold text-gray-800 mb-4">
-                Categorii
-              </h2>
+    <div className="flex flex-col min-h-screen  items-center bg-gray-100">
+      <div className="hidden sm:flex sm:mt-12 gap-8 ">
+        <div className="flex-col w-full sm:w-1/5 space-y-8">
+          <Card className="hidden sm:block">
+            <CardHeader>
+              <CardTitle>Categorii</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
               {categories.map((category) => (
-                <div
-                  className="flex mt-2 items-center space-x-2"
-                  key={category._id}
-                >
+                <div key={category._id} className="flex items-center space-x-2">
                   <Checkbox
                     id={category._id}
                     checked={selectedCategories.includes(category._id)}
                     onCheckedChange={() => handleCategoryChange(category._id)}
                   />
-                  <Label
-                    htmlFor={category._id}
-                    className="leading-7 text-sm text-gray-700"
-                  >
-                    {category.title}
-                  </Label>
+                  <Label htmlFor={category._id}>{category.title}</Label>
                 </div>
               ))}
-            </div>
-          </div>
-        )}
+            </CardContent>
+          </Card>
 
+          <Card className="hidden sm:block">
+            <CardHeader>
+              <CardTitle>Producător</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              {allBrands.map(
+                (brand) =>
+                  brand && (
+                    <div key={brand} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={brand}
+                        checked={selectedBrands.includes(brand)}
+                        onCheckedChange={() => handleBrandChange(brand)}
+                      />
+                      <Label htmlFor={brand}>{brand}</Label>
+                    </div>
+                  )
+              )}
+            </CardContent>
+          </Card>
+
+          <Button
+            className="hidden sm:flex items-center w-full"
+            onClick={resetFilters}
+          >
+            Reseteaza filtre
+          </Button>
+        </div>
+
+        <div className="flex-grow">
+          <Card className="mb-8">
+            <CardContent className="p-4">
+              <RadioGroup
+                defaultValue="price-asc"
+                className="grid sm:flex sm:justify-between gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="price-asc"
+                    id="price-asc"
+                    onClick={sortByPriceAsc}
+                  />
+                  <Label htmlFor="price-asc">Preț crescător</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="price-desc"
+                    id="price-desc"
+                    onClick={sortByPriceDesc}
+                  />
+                  <Label htmlFor="price-desc">Preț descrescător</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="a-z" id="a-z" onClick={handleAZSort} />
+                  <Label htmlFor="a-z">Alfabetic A-Z</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="z-a" id="z-a" onClick={handleZASort} />
+                  <Label htmlFor="z-a">Alfabetic Z-A</Label>
+                </div>
+              </RadioGroup>
+            </CardContent>
+          </Card>
+
+          <ProductGrid products={filteredProducts} />
+        </div>
+      </div>
+      <div className="block w-full sm:hidden bg-background ">
+        <Sheet open={showFilters} onOpenChange={setShowFilters}>
+          <SheetTrigger asChild>
+            <Button variant="outline" className="w-full justify-start mb-4">
+              <Filter className="mr-2 h-4 w-4" />
+              Filtre
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+            <SheetHeader>
+              <SheetTitle>Filtre și Sortare</SheetTitle>
+            </SheetHeader>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <h3 className="font-medium">Sortează</h3>
+                <Separator />
+                <RadioGroup defaultValue="price-asc" className="grid gap-2">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="price-asc"
+                      id="price-asc"
+                      onClick={sortByPriceAsc}
+                    />
+                    <Label htmlFor="price-asc">Preț crescător</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="price-desc"
+                      id="price-desc"
+                      onClick={sortByPriceDesc}
+                    />
+                    <Label htmlFor="price-desc">Preț descrescător</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="a-z"
+                      id="a-z"
+                      onClick={handleAZSort}
+                    />
+                    <Label htmlFor="a-z">Alfabetic A-Z</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="z-a"
+                      id="z-a"
+                      onClick={handleZASort}
+                    />
+                    <Label htmlFor="z-a">Alfabetic Z-A</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-medium">Producător</h3>
+                <Separator />
+                {allBrands.map(
+                  (brand) =>
+                    brand && (
+                      <div key={brand} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={brand}
+                          checked={selectedBrands.includes(brand)}
+                          onCheckedChange={() => handleBrandChange(brand)}
+                        />
+                        <Label htmlFor={brand}>{brand}</Label>
+                      </div>
+                    )
+                )}
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-medium">Categorii</h3>
+                <Separator />
+                {categories.map((category) => (
+                  <div
+                    key={category._id}
+                    className="flex items-center space-x-2"
+                  >
+                    <Checkbox
+                      id={category._id}
+                      checked={selectedCategories.includes(category._id)}
+                      onCheckedChange={() => handleCategoryChange(category._id)}
+                    />
+                    <Label htmlFor={category._id}>{category.title}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Button onClick={resetFilters}>Resetează filtre</Button>
+          </SheetContent>
+        </Sheet>
         <ProductGrid products={filteredProducts} />
       </div>
     </div>
