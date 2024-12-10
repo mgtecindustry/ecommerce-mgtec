@@ -1,7 +1,13 @@
 import ProductGrid from "@/components/ProductGrid";
 import { searchProductsByName } from "@/sanity/lib/products/searchProductsByName";
+import { Metadata } from "next";
 
-async function SearchPage({
+export const metadata: Metadata = {
+  title: "Search Results",
+  description: "Search results page",
+};
+
+export default async function SearchPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -36,5 +42,3 @@ async function SearchPage({
     </div>
   );
 }
-
-export default SearchPage;
