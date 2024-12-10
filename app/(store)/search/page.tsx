@@ -4,9 +4,10 @@ import { searchProductsByName } from "@/sanity/lib/products/searchProductsByName
 async function SearchPage({
   searchParams,
 }: {
-  searchParams: { query?: string | undefined };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const query = searchParams.query || ""; // Default to empty string
+  const queryParam = searchParams.query || "";
+  const query = Array.isArray(queryParam) ? queryParam[0] : queryParam;
   const products = await searchProductsByName(query);
 
   if (!products) {
