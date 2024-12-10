@@ -1,5 +1,3 @@
-//2:35:20
-
 import type { Metadata } from "next";
 import "../globals.css";
 import { ClerkProvider } from "@clerk/nextjs";

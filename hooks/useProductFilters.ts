@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Product } from "@/sanity.types"; // ajustați calea în funcție de structura proiectului
+import { Product } from "@/sanity.types";
 
 const useProductFilters = (initialProducts: Product[]) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
