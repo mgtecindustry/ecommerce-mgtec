@@ -12,7 +12,7 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function SearchPage({ params, searchParams }: PageProps) {
+export default async function SearchPage({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
   const queryParam = resolvedParams.query || "";
   const query = Array.isArray(queryParam) ? queryParam[0] : queryParam;
