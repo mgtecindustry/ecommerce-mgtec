@@ -4,7 +4,7 @@ import { searchProductsByName } from "@/sanity/lib/products/searchProductsByName
 async function SearchPage({
   searchParams,
 }: {
-  searchParams: { query?: string };
+  searchParams: { query?: string | undefined };
 }) {
   const query = searchParams.query || ""; // Default to empty string
   const products = await searchProductsByName(query);
