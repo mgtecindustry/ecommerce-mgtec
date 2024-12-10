@@ -24,18 +24,33 @@ function CartPage() {
     return <Loader />;
   }
 
-  const handleCheckout = async () => {
-    if (!isSignedIn || !user) {
-      return;
-    }
-    setIsLoading(true);
+  const handlePayment = async () => {
+    if (!user) return;
 
     try {
-      router.push("/plata");
+      const response = await fetch("/api/payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: useBasketStore.getState().getTotalPrice().toFixed(2),
+          currency: "RON",
+          orderId: `ORD-${Date.now()}`,
+          firstName: user.firstName ?? "",
+          lastName: user.lastName ?? "",
+          email: user.emailAddresses[0]?.emailAddress ?? "",
+          mobilePhone: user.phoneNumbers[0]?.phoneNumber ?? "",
+          address: user.unsafeMetadata.address ?? "",
+        }),
+      });
+
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url; // Redirectare către pagina de plată NETOPIA
+      }
     } catch (error) {
-      console.error("Eroare:", error);
-    } finally {
-      setIsLoading(false);
+      console.error("Eroare la inițierea plății:", error);
     }
   };
 
@@ -131,7 +146,7 @@ function CartPage() {
           </div>
           {isSignedIn ? (
             <button
-              onClick={handleCheckout}
+              onClick={handlePayment}
               disabled={isLoading}
               className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
             >
