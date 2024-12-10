@@ -28,6 +28,7 @@ function CartPage() {
     if (!user) return;
 
     try {
+      setIsLoading(true);
       const response = await fetch("/api/payment", {
         method: "POST",
         headers: {
@@ -47,10 +48,12 @@ function CartPage() {
 
       const data = await response.json();
       if (data.url) {
-        window.location.href = data.url; // Redirectare către pagina de plată NETOPIA
+        window.location.href = data.url;
       }
     } catch (error) {
       console.error("Eroare la inițierea plății:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
