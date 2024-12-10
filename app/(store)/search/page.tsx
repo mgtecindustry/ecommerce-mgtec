@@ -8,8 +8,8 @@ interface SearchPageProps {
 }
 
 async function SearchPage({ searchParams }: SearchPageProps) {
-  const query = searchParams.query || "";
-  const products = await searchProductsByName(query);
+  const query = await searchParams.query;
+  const products = await searchProductsByName(query || "");
 
   if (!products) {
     return (
