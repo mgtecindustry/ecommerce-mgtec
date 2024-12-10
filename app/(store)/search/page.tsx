@@ -7,12 +7,14 @@ export const metadata: Metadata = {
   description: "Search results page",
 };
 
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const queryParam = searchParams.query || "";
+interface PageProps {
+  params: { slug: string };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function SearchPage({ searchParams }: PageProps) {
+  const resolvedParams = await searchParams;
+  const queryParam = resolvedParams.query || "";
   const query = Array.isArray(queryParam) ? queryParam[0] : queryParam;
   const products = await searchProductsByName(query);
 
