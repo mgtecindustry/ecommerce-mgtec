@@ -1,13 +1,10 @@
 import { getAllProducts } from "@/sanity/lib/products/getAllProducts";
-import ProductsView from "@/components/ProductsView";
-import { getAllCategories } from "@/sanity/lib/products/getAllCategories";
 import BlackFridayBanner from "@/components/BlackFridayBanner";
 import ProductCarousel from "@/components/Carousel";
 import Services from "@/components/Services";
 
 export default async function Home() {
   const products = await getAllProducts();
-  const categories = await getAllCategories();
   return (
     <div>
       <BlackFridayBanner />

@@ -7,15 +7,12 @@ import { SignInButton, useAuth, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  createCheckoutSession,
+  Metadata,
+} from "@/actions/createCheckoutSession";
 
-export type Metadata = {
-  orderNumber: string;
-  customerName: string;
-  customerEmail: string;
-  clerkUserId: string;
-};
 function CartPage() {
-  const groupedItems = useBasketStore((state) => state.getGroupedItems);
   const { isSignedIn } = useAuth();
   const { user } = useUser();
   const router = useRouter();
