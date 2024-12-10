@@ -1,12 +1,14 @@
 import ProductGrid from "@/components/ProductGrid";
 import { searchProductsByName } from "@/sanity/lib/products/searchProductsByName";
 
-async function SearchPage({
-  searchParams,
-}: {
-  searchParams: { query: string };
-}) {
-  const { query } = await searchParams;
+interface SearchPageProps {
+  searchParams: {
+    query: string;
+  };
+}
+
+async function SearchPage({ searchParams }: SearchPageProps) {
+  const { query } = searchParams;
   const products = await searchProductsByName(query);
 
   if (!products.length) {
