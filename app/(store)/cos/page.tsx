@@ -7,10 +7,7 @@ import { SignInButton, useAuth, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  createCheckoutSession,
-  Metadata,
-} from "@/actions/createCheckoutSession";
+import axios from "axios";
 
 function CartPage() {
   const { isSignedIn } = useAuth();
@@ -35,20 +32,26 @@ function CartPage() {
     setIsLoading(true);
 
     try {
-      const metadata: Metadata = {
-        orderNumber: crypto.randomUUID(),
-        customerName: user?.fullName ?? "Unknown",
-        customerEmail: user?.emailAddresses[0].emailAddress ?? "Unknown",
-        clerkUserId: user!.id,
+      const totalAmount = useBasketStore.getState().getTotalPrice();
+
+      const paymentData = {
+        amount: totalAmount,
+        currency: "RON",
+        orderId: crypto.randomUUID(),
+        firstName: user?.firstName ?? "",
+        lastName: user?.lastName ?? "",
+        email: user?.emailAddresses[0].emailAddress ?? "",
+        mobilePhone: "",
+        address: "",
       };
 
-      const checkoutUrl = await createCheckoutSession(items, metadata);
+      const response = await axios.post("/api/payment", paymentData);
 
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
+      if (response.data.redirectUrl) {
+        window.location.href = response.data.redirectUrl;
       }
     } catch (error) {
-      console.error(error);
+      console.error("Eroare la procesarea plății:", error);
     } finally {
       setIsLoading(false);
     }
