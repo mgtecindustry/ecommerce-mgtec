@@ -1,5 +1,6 @@
 "use client";
 
+import { createCheckoutSession } from "@/actions/createCheckoutSession";
 import Loader from "@/components/Loader";
 import { imageUrl } from "@/lib/imageUrl";
 import useBasketStore from "@/store/store";
@@ -7,12 +8,16 @@ import { SignInButton, useAuth, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Metadata } from "@/actions/createCheckoutSession";
+import CollapsibleDeliveryDetails from "@/components/CollapsibleDeliveryDetails";
 
 function CartPage() {
   const { isSignedIn } = useAuth();
+  const basketStore = useBasketStore();
   const { user } = useUser();
   const router = useRouter();
-  const { items } = useBasketStore();
+  const groupedItems = basketStore.getGroupedItems();
+
   const [isClient, setIsClient] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,40 +29,7 @@ function CartPage() {
     return <Loader />;
   }
 
-  const handlePayment = async () => {
-    if (!user) return;
-
-    try {
-      setIsLoading(true);
-      const response = await fetch("/api/payment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount: useBasketStore.getState().getTotalPrice().toFixed(2),
-          currency: "RON",
-          orderId: `ORD-${Date.now()}`,
-          firstName: user.firstName ?? "",
-          lastName: user.lastName ?? "",
-          email: user.emailAddresses[0]?.emailAddress ?? "",
-          mobilePhone: user.phoneNumbers[0]?.phoneNumber ?? "",
-          address: user.unsafeMetadata.address ?? "",
-        }),
-      });
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error("Eroare la inițierea plății:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (items.length === 0) {
+  if (groupedItems.length === 0) {
     return (
       <div className="container mx-auto p-4 flex flex-col items-center justify-center min-h-[50vh]">
         <h1 className="text-2xl font-bold mb-6 text-gray-800">Cosul tau</h1>
@@ -65,12 +37,35 @@ function CartPage() {
       </div>
     );
   }
+
+  const handleCheckout = async () => {
+    if (!isSignedIn) return;
+    setIsLoading(true);
+    try {
+      const metadata: Metadata = {
+        orderNumber: crypto.randomUUID(),
+        customerName: user?.fullName ?? "Unknown",
+        customerEmail: user?.emailAddresses[0]?.emailAddress ?? "Unknown",
+        clerkUserId: user!.id,
+      };
+      const checkoutUrl = await createCheckoutSession(groupedItems, metadata);
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 max-w-6xl">
       <h1 className="text-2xl font-bold mb-4">Cosul tau</h1>
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col gap-8">
+        {/* Conținutul coșului */}
         <div className="flex-grow">
-          {items.map((item) => (
+          {groupedItems.map((item) => (
             <div
               key={item.product._id}
               className="mb-4 p-4 border rounded flex items-center justify-between"
@@ -81,10 +76,7 @@ function CartPage() {
                   router.push(`/produs/${item.product.slug?.current}`)
                 }
               >
-                <div
-                  className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0
-              mr-4"
-                >
+                <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 mr-4">
                   {item.product.image && (
                     <Image
                       src={imageUrl(item.product.image).url()}
@@ -106,20 +98,20 @@ function CartPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center sm:space-x-4 space-x-2">
                 <button
-                  className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-300 transition duration-200"
+                  className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-300 transition duration-200"
                   onClick={() => {
                     useBasketStore.getState().removeItem(item.product._id);
                   }}
                 >
                   <span className="text-lg font-bold">−</span>
                 </button>
-                <span className="w-8 text-center font-semibold text-gray-800">
+                <span className="w-6 sm:w-8 text-center font-semibold text-gray-800">
                   {item.quantity}
                 </span>
                 <button
-                  className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white hover:bg-blue-700 transition duration-200"
+                  className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-500 flex items-center justify-center text-white hover:bg-blue-700 transition duration-200"
                   onClick={() => {
                     useBasketStore.getState().addItem(item.product);
                   }}
@@ -131,13 +123,22 @@ function CartPage() {
           ))}
         </div>
 
-        <div className="w-full lg:w-80 lg:sticky lg:top-4 h-fit bg-white p-6 border rounded order-first lg:order-last fixed bottom-0 left-0 lg:left-auto">
+        {/* Detalii Livrare */}
+        <div className="w-full">
+          <CollapsibleDeliveryDetails />
+        </div>
+
+        {/* Rezumatul Comenzii */}
+        <div className="w-full bg-white p-6 border rounded">
           <h3 className="text-xl font-semibold">Rezumatul Comenzii</h3>
           <div className="mt-4 space-y-2">
             <p className="flex justify-between">
               <span>Produse:</span>
               <span>
-                {items.reduce((total, item) => total + (item.quantity ?? 0), 0)}
+                {groupedItems.reduce(
+                  (total, item) => total + (item.quantity ?? 0),
+                  0
+                )}
               </span>
             </p>
             <p className="flex justify-between text-2xl font-bold border-t pt-2">
@@ -148,13 +149,15 @@ function CartPage() {
             </p>
           </div>
           {isSignedIn ? (
-            <button
-              onClick={handlePayment}
-              disabled={isLoading}
-              className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-            >
-              {isLoading ? "Se procesează..." : "Finalizează comanda"}
-            </button>
+            <div>
+              <button
+                onClick={handleCheckout}
+                disabled={isLoading}
+                className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+              >
+                {isLoading ? "Se procesează..." : "Finalizează comanda"}
+              </button>
+            </div>
           ) : (
             <SignInButton mode="modal">
               <button className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
@@ -163,8 +166,6 @@ function CartPage() {
             </SignInButton>
           )}
         </div>
-
-        <div className="h-64 lg:h-0"></div>
       </div>
     </div>
   );

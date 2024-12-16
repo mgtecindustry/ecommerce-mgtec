@@ -25,7 +25,7 @@ function ProductCarouselContent({ products }: ProductCarouselProps) {
       opts={{
         align: "start",
       }}
-      className="w-full max-w-6xl mx-auto relative"
+      className="w-full max-w-6xl px-8 mx-auto relative"
     >
       <CarouselContent>
         {products.map((product) => (

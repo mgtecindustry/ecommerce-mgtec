@@ -63,7 +63,12 @@ const useBasketStore = create<BasketState>()(
         const item = get().items.find((item) => item.product._id === productId);
         return item ? item.quantity : 0;
       },
-      getGroupedItems: () => get().items,
+      getGroupedItems: () => {
+        return get().items.map((item) => ({
+          product: item.product,
+          quantity: item.quantity,
+        }));
+      },
     }),
     {
       name: "basket store",
