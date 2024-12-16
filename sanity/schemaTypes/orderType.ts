@@ -1,6 +1,5 @@
 import { BasketIcon } from "@sanity/icons";
 import { defineType, defineField, defineArrayMember } from "sanity";
-//1:33:00
 
 export const orderType = defineType({
   name: "order",
@@ -125,6 +124,36 @@ export const orderType = defineType({
       title: "Order Date",
       type: "datetime",
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "nume",
+      title: "Nume",
+      type: "string",
+    }),
+    defineField({
+      name: "adresa",
+      title: "Adresa",
+      type: "string",
+    }),
+    defineField({
+      name: "judet",
+      title: "Judet",
+      type: "string",
+    }),
+    defineField({
+      name: "oras",
+      title: "Oras",
+      type: "string",
+    }),
+    defineField({
+      name: "codPostal",
+      title: "Cod Postal",
+      type: "string",
+    }),
+    defineField({
+      name: "telefon",
+      title: "Telefon",
+      type: "string",
     }),
   ],
   preview: {

@@ -111,6 +111,12 @@ export type Order = {
   amountDiscount?: number;
   status?: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
   orderDate?: string;
+  nume?: string;
+  adresa?: string;
+  judet?: string;
+  oras?: string;
+  codPostal?: string;
+  telefon?: string;
 };
 
 export type Product = {
@@ -366,25 +372,13 @@ export type MY_ORDERS_QUERYResult = Array<{
   amountDiscount?: number;
   status?: "cancelled" | "delivered" | "paid" | "pending" | "shipped";
   orderDate?: string;
+  nume?: string;
+  adresa?: string;
+  judet?: string;
+  oras?: string;
+  codPostal?: string;
+  telefon?: string;
 }>;
-
-// Source: ./sanity/lib/sales/getActiveSaleByCouponCode.ts
-// Variable: ACTIVE_SALE_BY_COUPON_QUERY
-// Query: *[_type == "sale" && isActive == true && couponCode == $couponCode]     | order(validFrom desc) [0]
-export type ACTIVE_SALE_BY_COUPON_QUERYResult = {
-  _id: string;
-  _type: "sale";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  description?: string;
-  discountAmount?: number;
-  couponCode?: string;
-  validFrom?: string;
-  validUntil?: string;
-  isActive?: boolean;
-} | null;
 
 // Source: ./sanity/lib/products/getAllBrands.ts
 // Variable: ALL_BRANDS_QUERY
@@ -663,17 +657,35 @@ export type PRODUCT_SEARCH_QUERYResult = Array<{
   stock?: number;
 }>;
 
+// Source: ./sanity/lib/sales/getActiveSaleByCouponCode.ts
+// Variable: ACTIVE_SALE_BY_COUPON_QUERY
+// Query: *[_type == "sale" && isActive == true && couponCode == $couponCode]     | order(validFrom desc) [0]
+export type ACTIVE_SALE_BY_COUPON_QUERYResult = {
+  _id: string;
+  _type: "sale";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  description?: string;
+  discountAmount?: number;
+  couponCode?: string;
+  validFrom?: string;
+  validUntil?: string;
+  isActive?: boolean;
+} | null;
+
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "\n    *[_type == 'order' && clerkUserId == $userId] | order(orderDate desc) {\n        ...,\n        products[]{\n            ...,\n            product-> \n\n            \n        }\n    }\n    ": MY_ORDERS_QUERYResult;
-    "\n    *[_type == \"sale\" && isActive == true && couponCode == $couponCode] \n    | order(validFrom desc) [0]\n  ": ACTIVE_SALE_BY_COUPON_QUERYResult;
     "\n    *[_type == \"product\"]{\n      brand\n    } | order(brand asc)\n  ": ALL_BRANDS_QUERYResult;
     "*[_type =='category'] | order(name asc)": ALL_CATEGORIES_QUERYResult;
     "\n        *[_type ==\"product\"]|order(name asc)": ALL_PRODUCTS_QUERYResult;
     "\n    *[\n      _type == \"product\" && slug.current == $slug\n      ] | order(name asc)[0]\n    ": PRODUCT_BY_ID_QUERYResult;
     "\n        *[\n            _type ==\"product\"\n            && references(*[_type ==\"category\" && slug.current == $categorySlug]._id)\n        ] | order(name asc)\n        ": PRODUCT_BY_CATEGORY_QUERYResult;
     "\n        *[\n            _type == \"product\"\n            && name match $searchParam\n        ] | order(name asc)\n        ": PRODUCT_SEARCH_QUERYResult;
+    "\n    *[_type == \"sale\" && isActive == true && couponCode == $couponCode] \n    | order(validFrom desc) [0]\n  ": ACTIVE_SALE_BY_COUPON_QUERYResult;
   }
 }
