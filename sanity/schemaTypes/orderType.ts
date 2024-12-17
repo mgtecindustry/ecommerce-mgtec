@@ -125,36 +125,6 @@ export const orderType = defineType({
       type: "datetime",
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: "nume",
-      title: "Nume",
-      type: "string",
-    }),
-    defineField({
-      name: "adresa",
-      title: "Adresa",
-      type: "string",
-    }),
-    defineField({
-      name: "judet",
-      title: "Judet",
-      type: "string",
-    }),
-    defineField({
-      name: "oras",
-      title: "Oras",
-      type: "string",
-    }),
-    defineField({
-      name: "codPostal",
-      title: "Cod Postal",
-      type: "string",
-    }),
-    defineField({
-      name: "telefon",
-      title: "Telefon",
-      type: "string",
-    }),
   ],
   preview: {
     select: {
@@ -174,5 +144,3 @@ export const orderType = defineType({
     },
   },
 });
-
-//1:36:55

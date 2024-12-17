@@ -10,6 +10,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Metadata } from "@/actions/createCheckoutSession";
 import CollapsibleDeliveryDetails from "@/components/CollapsibleDeliveryDetails";
+import CollapsibleCourierDetails from "@/components/CollapsibleCourierDetails";
+import { CheckoutStore } from "@/store/checkoutStore";
+import { backendClient } from "@/sanity/lib/backendClient";
 
 function CartPage() {
   const { isSignedIn } = useAuth();
@@ -39,6 +42,7 @@ function CartPage() {
   }
 
   const handleCheckout = async () => {
+    const checkoutState = CheckoutStore.getState();
     if (!isSignedIn) return;
     setIsLoading(true);
     try {
@@ -50,6 +54,20 @@ function CartPage() {
       };
       const checkoutUrl = await createCheckoutSession(groupedItems, metadata);
       if (checkoutUrl) {
+        const orderData = {
+          // nume: CheckoutStore.getState().formData.nume,
+          // email: CheckoutStore.getState().formData.email,
+          // telefon: CheckoutStore.getState().formData.telefon,
+          // adresa: CheckoutStore.getState().formData.adresa,
+          // oras: CheckoutStore.getState().formData.oras,
+          // codPostal: CheckoutStore.getState().formData.codPostal,
+          // judet: CheckoutStore.getState().formData.judet,
+          ...checkoutState.formData,
+          tipCurier: CheckoutStore.getState().courier,
+          orderNumber: metadata.orderNumber,
+          products: groupedItems,
+        };
+        localStorage.setItem("orderData", JSON.stringify(orderData));
         window.location.href = checkoutUrl;
       }
     } catch (error) {
@@ -127,7 +145,9 @@ function CartPage() {
         <div className="w-full">
           <CollapsibleDeliveryDetails />
         </div>
-
+        <div className="w-full">
+          <CollapsibleCourierDetails />
+        </div>
         {/* Rezumatul Comenzii */}
         <div className="w-full bg-white p-6 border rounded">
           <h3 className="text-xl font-semibold">Rezumatul Comenzii</h3>

@@ -40,6 +40,8 @@ const formSchema = z.object({
       "Introduceți un număr de telefon valid (format național sau internațional)"
     ),
 
+  email: z.string().trim().email("Introduceți o adresă de email validă"),
+
   judet: z
     .string()
     .trim()
@@ -58,5 +60,6 @@ export const defaultValues = {
   oras: "",
   codPostal: "",
   telefon: "",
+  email: "",
   judet: "",
 };

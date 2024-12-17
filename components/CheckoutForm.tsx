@@ -15,6 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { CheckoutStore } from "@/store/checkoutStore";
 
 export function CheckoutForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -23,6 +24,8 @@ export function CheckoutForm() {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    CheckoutStore.getState().setFormData(values);
+    localStorage.setItem("formData", JSON.stringify(values));
     console.log(values);
   };
 
@@ -37,6 +40,35 @@ export function CheckoutForm() {
               <FormLabel>Nume</FormLabel>
               <FormControl>
                 <Input placeholder="Introduceți numele complet" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="telefon"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Telefon</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Introduceți numărul de telefon"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="Introduceți emailul" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -92,22 +124,6 @@ export function CheckoutForm() {
               <FormLabel>Cod Postal</FormLabel>
               <FormControl>
                 <Input placeholder="Introduceți codul poștal" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="telefon"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Telefon</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Introduceți numărul de telefon"
-                  {...field}
-                />
               </FormControl>
               <FormMessage />
             </FormItem>

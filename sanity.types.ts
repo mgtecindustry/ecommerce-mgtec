@@ -111,12 +111,6 @@ export type Order = {
   amountDiscount?: number;
   status?: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
   orderDate?: string;
-  nume?: string;
-  adresa?: string;
-  judet?: string;
-  oras?: string;
-  codPostal?: string;
-  telefon?: string;
 };
 
 export type Product = {
@@ -372,12 +366,6 @@ export type MY_ORDERS_QUERYResult = Array<{
   amountDiscount?: number;
   status?: "cancelled" | "delivered" | "paid" | "pending" | "shipped";
   orderDate?: string;
-  nume?: string;
-  adresa?: string;
-  judet?: string;
-  oras?: string;
-  codPostal?: string;
-  telefon?: string;
 }>;
 
 // Source: ./sanity/lib/products/getAllBrands.ts
