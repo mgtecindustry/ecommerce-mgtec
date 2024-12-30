@@ -6,6 +6,8 @@ import { SanityLive } from "@/sanity/lib/live";
 import { draftMode } from "next/headers";
 import { VisualEditing } from "next-sanity";
 import { DisableDraftMode } from "@/components/DisableDraftMode";
+import { Toaster } from "@/components/ui/toaster";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Mgtec SoftCare",
@@ -20,18 +22,20 @@ export default async function RootLayout({
   return (
     <ClerkProvider dynamic>
       <html lang="en">
-        <body className="antialiased">
+        <body className="antialiased min-h-screen flex flex-col justify-between">
           {(await draftMode()).isEnabled && (
             <>
               <DisableDraftMode />
               <VisualEditing />
             </>
           )}
-          <main>
+          <main className="flex-grow">
             <Header />
             {children}
           </main>
+          <Footer />
           <SanityLive />
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

@@ -4,6 +4,7 @@ import { Product } from "@/sanity.types";
 import useBasketStore from "@/store/store";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+import { toast } from "@/hooks/use-toast";
 
 interface AddToBasketButtonProps {
   product: Product;
@@ -51,7 +52,7 @@ function AddToBasketButton({ product, disabled }: AddToBasketButtonProps) {
         </button>
       </div>
       <Button
-        className="bg-blue-500 "
+        className="bg-blue-500 hover:bg-blue-600"
         onClick={() => {
           if (count > 0) {
             for (let i = 0; i < count; i++) {
@@ -59,11 +60,14 @@ function AddToBasketButton({ product, disabled }: AddToBasketButtonProps) {
             }
             setCount(0);
           }
-          console.log(product._id);
+          toast({
+            title: "Produs adăugat în coș",
+            description: "Produsul a fost adăugat în coș",
+          });
         }}
         disabled={count === 0}
       >
-        Adauga in cos
+        Adaugă în coș
       </Button>
     </div>
   );

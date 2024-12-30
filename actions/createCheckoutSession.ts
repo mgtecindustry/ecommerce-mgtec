@@ -17,7 +17,8 @@ export type GroupedBasketItem = {
 
 export async function createCheckoutSession(
   items: GroupedBasketItem[],
-  metadata: Metadata
+  metadata: Metadata,
+  shippingCost: number
 ) {
   try {
     const itemsWithoutPrice = items.filter((item) => !item.product.price);
@@ -70,6 +71,18 @@ export async function createCheckoutSession(
         },
         quantity: item.quantity,
       })),
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            fixed_amount: {
+              amount: Math.round(shippingCost * 100),
+              currency: "RON",
+            },
+            display_name: "Transport",
+          },
+        },
+      ],
     });
 
     return session.url;

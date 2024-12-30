@@ -13,7 +13,7 @@ interface CourierOption {
   logo: string;
 }
 
-const courierOptions: CourierOption[] = [
+export const courierOptions: CourierOption[] = [
   {
     name: "Cargus",
     price: 20,
@@ -87,3 +87,4 @@ export default function CourierDetails() {
     </div>
   );
 }
+//4:46:24

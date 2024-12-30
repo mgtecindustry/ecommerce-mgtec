@@ -5,16 +5,43 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useBasketStore from "@/store/store";
-import { client } from "@/sanity/lib/client"; // asigură-te că ai configurat corect clientul pentru Sanity
-import { backendClient } from "@/sanity/lib/backendClient";
 import { createOrder } from "@/actions/createOrder";
+import { Roboto } from "next/font/google";
 
-function SuccessPage() {
+// Mută declararea fontului aici, la nivel de modul (în afara componentei)
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+// Adăugăm interfețele pentru tipurile de date
+interface Product {
+  _id: string;
+}
+
+interface BasketItem {
+  product: Product;
+  quantity: number;
+}
+
+interface OrderData {
+  nume: string;
+  email: string;
+  adresa: string;
+  oras: string;
+  telefon: string;
+  judet: string;
+  codPostal: string;
+  tipCurier: string;
+  products: BasketItem[];
+}
+
+export default function SuccessPage() {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get("orderNumber");
   const clearBasket = useBasketStore((state) => state.clearBasket);
 
-  const [orderData, setOrderData] = useState<any>(null);
+  const [orderData, setOrderData] = useState<OrderData | null>(null);
 
   useEffect(() => {
     const saveOrder = async () => {
@@ -27,7 +54,7 @@ function SuccessPage() {
       const storedOrderData = localStorage.getItem("orderData");
       if (!storedOrderData) return;
 
-      const parsedOrderData = JSON.parse(storedOrderData);
+      const parsedOrderData = JSON.parse(storedOrderData) as OrderData;
       setOrderData(parsedOrderData);
 
       // Creează un obiect pentru comanda ta
@@ -42,7 +69,7 @@ function SuccessPage() {
         judetClient: parsedOrderData.judet,
         codPostalClient: parsedOrderData.codPostal,
         tipCurier: parsedOrderData.tipCurier,
-        products: parsedOrderData.products.map((item: any) => ({
+        products: parsedOrderData.products.map((item: BasketItem) => ({
           _type: "object",
           _key: crypto.randomUUID(),
           product: { _ref: item.product._id },
@@ -56,7 +83,9 @@ function SuccessPage() {
   }, [orderNumber, clearBasket]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div
+      className={`flex flex-col items-center justify-center min-h-screen bg-gray-50 ${roboto.className}`}
+    >
       <div className="bg-white p-12 rounded-xl shadow-lg max-w-2xl w-full mx-4">
         <div className="flex justify-center mb-8">
           <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center">
@@ -111,7 +140,7 @@ function SuccessPage() {
               <Link href="/comenzi">Vezi detaliile comenzii</Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/produse">Continua cumpărăturile</Link>
+              <Link href="/produse">Continuă cumpărăturile</Link>
             </Button>
           </div>
         </div>
@@ -119,5 +148,3 @@ function SuccessPage() {
     </div>
   );
 }
-
-export default SuccessPage;

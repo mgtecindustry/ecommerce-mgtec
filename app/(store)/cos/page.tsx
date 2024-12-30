@@ -12,7 +12,15 @@ import { Metadata } from "@/actions/createCheckoutSession";
 import CollapsibleDeliveryDetails from "@/components/CollapsibleDeliveryDetails";
 import CollapsibleCourierDetails from "@/components/CollapsibleCourierDetails";
 import { CheckoutStore } from "@/store/checkoutStore";
-import { backendClient } from "@/sanity/lib/backendClient";
+
+import { courierOptions } from "@/components/CourierDetails";
+import { ArrowRight } from "lucide-react";
+import { Roboto } from "next/font/google";
+
+const roboto = Roboto({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+});
 
 function CartPage() {
   const { isSignedIn } = useAuth();
@@ -20,7 +28,11 @@ function CartPage() {
   const { user } = useUser();
   const router = useRouter();
   const groupedItems = basketStore.getGroupedItems();
-
+  const courier = CheckoutStore((state) => state.courier);
+  const checkoutState = CheckoutStore((state) => state.formData);
+  const courierPrice =
+    courierOptions.find((option) => option.name === courier)?.price ?? 0;
+  const shippingCost = courierPrice;
   const [isClient, setIsClient] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,9 +46,30 @@ function CartPage() {
 
   if (groupedItems.length === 0) {
     return (
-      <div className="container mx-auto p-4 flex flex-col items-center justify-center min-h-[50vh]">
-        <h1 className="text-2xl font-bold mb-6 text-gray-800">Cosul tau</h1>
-        <p>Cosul tau este gol</p>
+      <div
+        className={`container mx-auto p-8 flex flex-col items-center justify-center min-h-[60vh] ${roboto.className}`}
+      >
+        <div className="text-center space-y-6">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Coșul tău este gol
+          </h1>
+          <p className="text-gray-600 text-lg">
+            Nu ai adăugat încă niciun produs în coș.
+          </p>
+          <div className="flex justify-center">
+            <button
+              onClick={() => router.push("/produse")}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg 
+              transition duration-200 ease-in-out transform hover:scale-105 
+              "
+            >
+              <span className="flex items-center gap-2">
+                <ArrowRight className="w-5 h-5" />
+                Vezi produsele noastre
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -52,16 +85,13 @@ function CartPage() {
         customerEmail: user?.emailAddresses[0]?.emailAddress ?? "Unknown",
         clerkUserId: user!.id,
       };
-      const checkoutUrl = await createCheckoutSession(groupedItems, metadata);
+      const checkoutUrl = await createCheckoutSession(
+        groupedItems,
+        metadata,
+        shippingCost
+      );
       if (checkoutUrl) {
         const orderData = {
-          // nume: CheckoutStore.getState().formData.nume,
-          // email: CheckoutStore.getState().formData.email,
-          // telefon: CheckoutStore.getState().formData.telefon,
-          // adresa: CheckoutStore.getState().formData.adresa,
-          // oras: CheckoutStore.getState().formData.oras,
-          // codPostal: CheckoutStore.getState().formData.codPostal,
-          // judet: CheckoutStore.getState().formData.judet,
           ...checkoutState.formData,
           tipCurier: CheckoutStore.getState().courier,
           orderNumber: metadata.orderNumber,
@@ -77,9 +107,22 @@ function CartPage() {
     }
   };
 
+  const isFormComplete = () => {
+    return (
+      checkoutState.nume?.trim() &&
+      checkoutState.telefon?.trim() &&
+      checkoutState.email?.trim() &&
+      checkoutState.adresa?.trim() &&
+      checkoutState.oras?.trim() &&
+      checkoutState.codPostal?.trim() &&
+      checkoutState.judet?.trim() &&
+      courier
+    );
+  };
+
   return (
-    <div className="container mx-auto p-4 max-w-6xl">
-      <h1 className="text-2xl font-bold mb-4">Cosul tau</h1>
+    <div className={`${roboto.className} container mx-auto p-4 max-w-6xl`}>
+      <h1 className="text-2xl font-bold mb-4">Coșul tău</h1>
       <div className="flex flex-col gap-8">
         {/* Conținutul coșului */}
         <div className="flex-grow">
@@ -161,10 +204,19 @@ function CartPage() {
                 )}
               </span>
             </p>
+
+            <p className="flex justify-between">
+              <span>Cost livrare:</span>
+              <span>RON {courierPrice.toFixed(2)}</span>
+            </p>
+
             <p className="flex justify-between text-2xl font-bold border-t pt-2">
               <span>Total:</span>
               <span>
-                RON{useBasketStore.getState().getTotalPrice().toFixed(2)}
+                RON
+                {(
+                  useBasketStore.getState().getTotalPrice() + courierPrice
+                ).toFixed(2)}
               </span>
             </p>
           </div>
@@ -172,7 +224,7 @@ function CartPage() {
             <div>
               <button
                 onClick={handleCheckout}
-                disabled={isLoading}
+                disabled={isLoading || !isFormComplete()}
                 className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
               >
                 {isLoading ? "Se procesează..." : "Finalizează comanda"}
@@ -181,7 +233,7 @@ function CartPage() {
           ) : (
             <SignInButton mode="modal">
               <button className="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Logheaza-te pentru a finaliza comanda
+                Loghează-te pentru a finaliza comanda
               </button>
             </SignInButton>
           )}

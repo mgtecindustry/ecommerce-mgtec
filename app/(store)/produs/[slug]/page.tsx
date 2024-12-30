@@ -4,6 +4,17 @@ import Image from "next/image";
 import { imageUrl } from "@/lib/imageUrl";
 import { PortableText } from "next-sanity";
 import AddToBasketButton from "@/components/AddToBasketButton";
+import { Roboto } from "next/font/google";
+import Link from "next/link";
+import { IoArrowBackOutline } from "react-icons/io5";
+
+export const dynamic = "force-static";
+export const revalidate = 600;
+
+const roboto = Roboto({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+});
 
 async function ProductPage({
   params,
@@ -20,7 +31,18 @@ async function ProductPage({
   const outOfStock = product.stock != null && product.stock <= 0;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className={`container mx-auto px-4 py-8 ${roboto.className}`}>
+      <Link
+        href="/produse"
+        className="inline-flex items-center gap-2 mb-6 text-blue-500 hover:text-blue-700 group transition duration-300 font-medium"
+      >
+        <IoArrowBackOutline
+          size={20}
+          className="transform transition-transform duration-300 group-hover:-translate-x-1"
+        />
+        Înapoi la produse
+      </Link>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div
           className={`relative aspect-square overflow-hidden rounded-lg shadow-lg ${outOfStock ? "opacity-50" : ""}`}

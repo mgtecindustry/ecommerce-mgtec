@@ -17,7 +17,7 @@ interface ProductCarouselProps {
 
 function ProductCarouselContent({ products }: ProductCarouselProps) {
   if (!products || products.length === 0) {
-    return <div className="text-center py-4">No products available.</div>;
+    return <div className="text-center py-4">Nu sunt produse disponibile.</div>;
   }
 
   return (
@@ -46,5 +46,8 @@ function ProductCarouselContent({ products }: ProductCarouselProps) {
 }
 
 export default function ProductCarousel({ products }: ProductCarouselProps) {
-  return <ProductCarouselContent products={products} />;
+  const recommendedProducts = products.filter(
+    (product) => product.recommended === true
+  );
+  return <ProductCarouselContent products={recommendedProducts} />;
 }

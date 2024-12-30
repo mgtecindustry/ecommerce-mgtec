@@ -6,6 +6,12 @@ import { getMyOrders } from "@/sanity/lib/orders/getMyOrders";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
+import { Roboto } from "next/font/google";
+
+const roboto = Roboto({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+});
 
 async function OrdersPage() {
   const { userId } = await auth();
@@ -17,7 +23,9 @@ async function OrdersPage() {
   const orders = await getMyOrders(userId);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+    <div
+      className={`${roboto.className} flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4`}
+    >
       <div className="bg-white p-4 sm:p-8 rounded-xl shadow-lg w-full max-w-4xl">
         <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-8">
           Comenzile mele

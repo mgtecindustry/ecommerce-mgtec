@@ -16,16 +16,38 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { CheckoutStore } from "@/store/checkoutStore";
+import { useToast } from "@/hooks/use-toast";
 
-export function CheckoutForm() {
+export function CheckoutForm({
+  onFormSubmitAction,
+}: {
+  onFormSubmitAction: () => void;
+}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
-
+  const { toast } = useToast();
+  const isFormComplete = () => {
+    const values = form.getValues();
+    return (
+      values.nume?.trim() &&
+      values.telefon?.trim() &&
+      values.email?.trim() &&
+      values.adresa?.trim() &&
+      values.oras?.trim() &&
+      values.codPostal?.trim() &&
+      values.judet?.trim()
+    );
+  };
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     CheckoutStore.getState().setFormData(values);
     localStorage.setItem("formData", JSON.stringify(values));
+    toast({
+      title: "Detalii de livrare salvate",
+      description: "Detalii de livrare salvate cu succes",
+    });
+    onFormSubmitAction();
     console.log(values);
   };
 
@@ -131,7 +153,7 @@ export function CheckoutForm() {
         />
         <Button
           type="submit"
-          onClick={() => {}}
+          disabled={!isFormComplete()}
           className="bg-blue-500 hover:bg-blue-700"
         >
           Salveaza detalii de livrare

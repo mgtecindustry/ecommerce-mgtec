@@ -117,9 +117,9 @@ const ProductsView = ({ products, categories }: ProductsViewProps) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen  items-center bg-gray-100">
-      <div className="hidden sm:flex sm:mt-12 gap-8 ">
-        <div className="flex-col w-full sm:w-1/5 space-y-8">
+    <div className="flex flex-col min-h-screen items-center bg-gray-100">
+      <div className="hidden sm:flex sm:mt-12 gap-8 w-full max-w-[1400px] px-4">
+        <div className="w-1/5 space-y-8">
           <Card className="hidden sm:block">
             <CardHeader>
               <CardTitle>Categorii</CardTitle>
@@ -160,15 +160,16 @@ const ProductsView = ({ products, categories }: ProductsViewProps) => {
           </Card>
 
           <Button
-            className="hidden sm:flex items-center w-full"
+            variant="default"
+            className="bg-blue-500 hover:bg-blue-700 hidden sm:flex items-center w-full"
             onClick={resetFilters}
           >
-            Reseteaza filtre
+            Resetează filtre
           </Button>
         </div>
 
-        <div className="flex-grow">
-          <Card className="mb-8">
+        <div className="flex-grow flex flex-col">
+          <Card className="mb-8 w-full">
             <CardContent className="p-4">
               <RadioGroup
                 defaultValue="price-asc"
@@ -202,10 +203,19 @@ const ProductsView = ({ products, categories }: ProductsViewProps) => {
             </CardContent>
           </Card>
 
-          <ProductGrid products={filteredProducts} />
+          <div className="flex-grow min-h-[600px] w-full">
+            {filteredProducts.length > 0 ? (
+              <ProductGrid products={filteredProducts} />
+            ) : (
+              <div className="flex items-center justify-center h-full w-full text-center text-gray-500">
+                Nu au fost găsite produse pentru filtrele aplicate.
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <div className="block w-full sm:hidden bg-background ">
+
+      <div className="block w-full sm:hidden bg-background px-4">
         <Sheet open={showFilters} onOpenChange={setShowFilters}>
           <SheetTrigger asChild>
             <Button variant="outline" className="w-full justify-start mb-4">
@@ -291,10 +301,23 @@ const ProductsView = ({ products, categories }: ProductsViewProps) => {
                 ))}
               </div>
             </div>
-            <Button onClick={resetFilters}>Resetează filtre</Button>
+            <Button
+              className="bg-blue-500 hover:bg-blue-700"
+              onClick={resetFilters}
+            >
+              Resetează filtre
+            </Button>
           </SheetContent>
         </Sheet>
-        <ProductGrid products={filteredProducts} />
+        <div className="min-h-[600px] w-full">
+          {filteredProducts.length > 0 ? (
+            <ProductGrid products={filteredProducts} />
+          ) : (
+            <div className="flex items-center justify-center h-full w-full text-center text-gray-500">
+              Nu au fost găsite produse pentru filtrele aplicate.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

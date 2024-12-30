@@ -35,7 +35,7 @@ export default function DropdownCheckout() {
             className="overflow-hidden bg-white  border-gray-200 rounded-b-lg shadow-sm"
           >
             <div ref={contentRef}>
-              <CheckoutForm />
+              <CheckoutForm onFormSubmitAction={() => setIsOpen(false)} />
             </div>
           </motion.div>
         )}

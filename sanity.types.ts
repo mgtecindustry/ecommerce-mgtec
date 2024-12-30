@@ -68,6 +68,33 @@ export type Geopoint = {
   alt?: number;
 };
 
+export type OrderDetails = {
+  _id: string;
+  _type: "orderDetails";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  orderNumber?: string;
+  numeClient?: string;
+  emailClient?: string;
+  adresaClient?: string;
+  orasClient?: string;
+  telefonClient?: string;
+  judetClient?: string;
+  codPostalClient?: string;
+  tipCurier?: string;
+  products?: Array<{
+    product?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "product";
+    };
+    quantity?: number;
+    _key: string;
+  }>;
+};
+
 export type Sale = {
   _id: string;
   _type: "sale";
@@ -133,6 +160,7 @@ export type Product = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  recommended?: boolean;
   description?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -279,7 +307,7 @@ export type SanityImageMetadata = {
   isOpaque?: boolean;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | Sale | Order | Product | Category | Slug | BlockContent | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | OrderDetails | Sale | Order | Product | Category | Slug | BlockContent | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/orders/getMyOrders.ts
 // Variable: MY_ORDERS_QUERY
@@ -318,6 +346,7 @@ export type MY_ORDERS_QUERYResult = Array<{
         crop?: SanityImageCrop;
         _type: "image";
       };
+      recommended?: boolean;
       description?: Array<{
         children?: Array<{
           marks?: Array<string>;
@@ -412,6 +441,7 @@ export type ALL_PRODUCTS_QUERYResult = Array<{
     crop?: SanityImageCrop;
     _type: "image";
   };
+  recommended?: boolean;
   description?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -476,6 +506,7 @@ export type PRODUCT_BY_ID_QUERYResult = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  recommended?: boolean;
   description?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -540,6 +571,7 @@ export type PRODUCT_BY_CATEGORY_QUERYResult = Array<{
     crop?: SanityImageCrop;
     _type: "image";
   };
+  recommended?: boolean;
   description?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -604,6 +636,7 @@ export type PRODUCT_SEARCH_QUERYResult = Array<{
     crop?: SanityImageCrop;
     _type: "image";
   };
+  recommended?: boolean;
   description?: Array<{
     children?: Array<{
       marks?: Array<string>;
