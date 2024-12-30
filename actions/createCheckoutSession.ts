@@ -37,7 +37,7 @@ export async function createCheckoutSession(
     const baseUrl =
       process.env.NODE_ENV === "production"
         ? `https://${process.env.VERCEL_URL}`
-        : `${process.env.NEXT_PUBLIC_BASE_URL}`;
+        : `http://localhost:3000`;
 
     const successUrl = `${
       baseUrl

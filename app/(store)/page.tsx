@@ -17,7 +17,9 @@ export default async function Home() {
   const products = await getAllProducts();
   return (
     <div style={{ fontFamily: roboto.style.fontFamily }}>
-      <BlackFridayBanner />
+      <div className="p-2 sm:p-0">
+        <BlackFridayBanner />
+      </div>
       <div className="flex flex-col items-center justify-top min-h-screen bg-gray-100 p-4">
         <div className="space-y-4 text-center mb-12">
           <Badge
