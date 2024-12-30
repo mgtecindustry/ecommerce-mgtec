@@ -34,12 +34,7 @@ export const productType = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: "recommended",
-      title: "Recommended",
-      type: "boolean",
-      description: "Marcheaza acest produs ca si recomandat",
-    }),
+
     defineField({
       name: "description",
       title: "Description",
