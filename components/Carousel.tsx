@@ -46,8 +46,5 @@ function ProductCarouselContent({ products }: ProductCarouselProps) {
 }
 
 export default function ProductCarousel({ products }: ProductCarouselProps) {
-  const recommendedProducts = products.filter(
-    (product) => product.recommended === true
-  );
-  return <ProductCarouselContent products={recommendedProducts} />;
+  return <ProductCarouselContent products={products} />;
 }
