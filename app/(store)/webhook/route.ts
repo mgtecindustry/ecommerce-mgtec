@@ -62,13 +62,14 @@ async function createOrderInSanity(session: Stripe.Checkout.Session) {
   } = session;
   const { orderNumber, customerName, customerEmail, clerkUserId } =
     metadata as Metadata;
-
+  console.log("Session data:", session);
   const lineItemsWithProduct = await stripe.checkout.sessions.listLineItems(
     id,
     {
       expand: ["data.price.product"],
     }
   );
+  console.log("Line items with product:", lineItemsWithProduct);
   const sanityProducts = lineItemsWithProduct.data.map((item) => ({
     _key: crypto.randomUUID(),
     product: {
@@ -77,8 +78,26 @@ async function createOrderInSanity(session: Stripe.Checkout.Session) {
     },
     quantity: item.quantity || 0,
   }));
-
+  console.log("Sanity products", sanityProducts);
   const order = await backendClient.create({
+    _type: "order",
+    orderNumber,
+    stripeCheckoutSessionId: id,
+    stripePaymentIntentId: payment_intent,
+    customerName,
+    stripeCustomerId: customer,
+    clerkUserId: clerkUserId,
+    email: customerEmail,
+    currency,
+    amountDiscount: total_details?.amount_discount
+      ? total_details.amount_discount / 100
+      : 0,
+    products: sanityProducts,
+    totalPrice: amount_total ? amount_total / 100 : 0,
+    status: "paid",
+    orderDate: new Date().toISOString(),
+  });
+  console.log("Creating order in Sanity with data:", {
     _type: "order",
     orderNumber,
     stripeCheckoutSessionId: id,
