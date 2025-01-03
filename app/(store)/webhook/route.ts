@@ -49,7 +49,6 @@ export async function POST(req: NextRequest) {
   }
   return NextResponse.json({ received: true });
 }
-
 async function createOrderInSanity(session: Stripe.Checkout.Session) {
   const {
     id,
@@ -60,25 +59,59 @@ async function createOrderInSanity(session: Stripe.Checkout.Session) {
     customer,
     total_details,
   } = session;
+
+  // Verifică existența metadata înainte de a le accesa
+  if (
+    !metadata ||
+    !metadata.orderNumber ||
+    !metadata.customerName ||
+    !metadata.customerEmail ||
+    !metadata.clerkUserId
+  ) {
+    throw new Error("Missing necessary metadata in session");
+  }
+
   const { orderNumber, customerName, customerEmail, clerkUserId } =
     metadata as Metadata;
-  console.log("Session data:", session);
+
+  // Verifică existența total_details înainte de a o folosi
+  const amountDiscount = total_details?.amount_discount
+    ? total_details.amount_discount / 100
+    : 0;
+
+  // Verifică dacă există line items
   const lineItemsWithProduct = await stripe.checkout.sessions.listLineItems(
     id,
     {
       expand: ["data.price.product"],
     }
   );
-  console.log("Line items with product:", lineItemsWithProduct);
-  const sanityProducts = lineItemsWithProduct.data.map((item) => ({
-    _key: crypto.randomUUID(),
-    product: {
-      _type: "reference",
-      _ref: (item.price?.product as Stripe.Product)?.metadata?.id,
-    },
-    quantity: item.quantity || 0,
-  }));
-  console.log("Sanity products", sanityProducts);
+
+  if (!lineItemsWithProduct.data.length) {
+    throw new Error("No line items found in session");
+  }
+
+  const sanityProducts = lineItemsWithProduct.data.map((item) => {
+    const product = item.price?.product;
+    if (!product) {
+      throw new Error("Missing product in line item");
+    }
+
+    return {
+      _key: crypto.randomUUID(),
+      product: {
+        _type: "reference",
+        _ref: (product as Stripe.Product).metadata?.id,
+      },
+      quantity: item.quantity || 0,
+    };
+  });
+
+  // Asigură-te că există amount_total și că valoarea este validă
+  if (!amount_total) {
+    throw new Error("Amount total is missing or invalid");
+  }
+
   const order = await backendClient.create({
     _type: "order",
     orderNumber,
@@ -86,32 +119,12 @@ async function createOrderInSanity(session: Stripe.Checkout.Session) {
     stripePaymentIntentId: payment_intent,
     customerName,
     stripeCustomerId: customer,
-    clerkUserId: clerkUserId,
+    clerkUserId,
     email: customerEmail,
     currency,
-    amountDiscount: total_details?.amount_discount
-      ? total_details.amount_discount / 100
-      : 0,
+    amountDiscount,
     products: sanityProducts,
-    totalPrice: amount_total ? amount_total / 100 : 0,
-    status: "paid",
-    orderDate: new Date().toISOString(),
-  });
-  console.log("Creating order in Sanity with data:", {
-    _type: "order",
-    orderNumber,
-    stripeCheckoutSessionId: id,
-    stripePaymentIntentId: payment_intent,
-    customerName,
-    stripeCustomerId: customer,
-    clerkUserId: clerkUserId,
-    email: customerEmail,
-    currency,
-    amountDiscount: total_details?.amount_discount
-      ? total_details.amount_discount / 100
-      : 0,
-    products: sanityProducts,
-    totalPrice: amount_total ? amount_total / 100 : 0,
+    totalPrice: amount_total / 100,
     status: "paid",
     orderDate: new Date().toISOString(),
   });
